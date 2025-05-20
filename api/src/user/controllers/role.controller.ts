@@ -19,8 +19,10 @@ import {
   Post,
   Query,
   Req,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { CsrfCheck } from '@tekuconcept/nestjs-csrf';
 import { Request } from 'express';
 
@@ -39,6 +41,7 @@ import { RoleService } from '../services/role.service';
 import { UserService } from '../services/user.service';
 
 @UseInterceptors(CsrfInterceptor)
+@UseGuards(AuthGuard('jwt'))
 @Controller('role')
 export class RoleController extends BaseController<
   Role,

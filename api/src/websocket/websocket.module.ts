@@ -7,13 +7,16 @@
  */
 
 import { Global, Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
 
+import { WsGuard } from './guards/ws.guard';
 import { SocketEventDispatcherService } from './services/socket-event-dispatcher.service';
 import { WebsocketGateway } from './websocket.gateway';
 
 @Global()
 @Module({
-  providers: [WebsocketGateway, SocketEventDispatcherService],
+  imports: [JwtModule.register({})],
+  providers: [WebsocketGateway, SocketEventDispatcherService, WsGuard],
   exports: [WebsocketGateway],
 })
 export class WebsocketModule {}

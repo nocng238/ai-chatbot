@@ -29,7 +29,7 @@ import { Input } from "../inputs/Input";
 import { PasswordInput } from "../inputs/PasswordInput";
 
 const DEFAULT_VALUES: ILoginAttributes = {
-  identifier: "",
+  email: "",
   password: "",
 };
 
@@ -40,10 +40,15 @@ export const Login = () => {
   const { authenticate } = useAuth();
   const { mutate: login, isLoading } = useLogin({
     onSuccess: (data) => {
-      if (data.state) authenticate(data);
-      else {
-        toast.error(t("message.account_disabled"));
-      }
+      console.log("Login data", data);
+      localStorage.setItem("token", data.token);
+      authenticate({
+        ...data.user,
+        language: "en",
+      });
+      // else {
+      //   toast.error(t("message.account_disabled"));
+      // }
     },
     onError() {
       toast.error(t("message.login_failure"));
@@ -99,14 +104,14 @@ export const Login = () => {
             </Typography>
             <Input
               label={t("placeholder.email")}
-              error={!!errors.identifier}
+              error={!!errors.email}
               required
               autoFocus
               InputProps={{
                 startAdornment: <Adornment Icon={EmailIcon} />,
               }}
-              helperText={errors.identifier ? errors.identifier.message : null}
-              {...register("identifier", validationRules.email)}
+              helperText={errors.email ? errors.email.message : null}
+              {...register("email", validationRules.email)}
             />
 
             <PasswordInput

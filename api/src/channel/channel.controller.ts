@@ -6,10 +6,12 @@
  * 2. All derivative works must include clear attribution to the original creator and software, Hexastack and Hexabot, in a prominent location (e.g., in the software's "About" section, documentation, and README file).
  */
 
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 
 import { ChannelService } from './channel.service';
 
+@UseGuards(AuthGuard('jwt'))
 @Controller('channel')
 export class ChannelController {
   constructor(private readonly channelService: ChannelService) {}

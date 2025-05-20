@@ -6,7 +6,8 @@
  * 2. All derivative works must include clear attribution to the original creator and software, Hexastack and Hexabot, in a prominent location (e.g., in the software's "About" section, documentation, and README file).
  */
 
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 
 import { BaseController } from '@/utils/generics/base-controller';
 import { PopulatePipe } from '@/utils/pipes/populate.pipe';
@@ -20,6 +21,7 @@ import {
 } from '../schemas/model.schema';
 import { ModelService } from '../services/model.service';
 
+@UseGuards(AuthGuard('jwt'))
 @Controller('model')
 export class ModelController extends BaseController<
   Model,

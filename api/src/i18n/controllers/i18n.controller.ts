@@ -6,7 +6,8 @@
  * 2. All derivative works must include clear attribution to the original creator and software, Hexastack and Hexabot, in a prominent location (e.g., in the software's "About" section, documentation, and README file).
  */
 
-import { Controller, Get, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, UseGuards, UseInterceptors } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 
 import { ChannelService } from '@/channel/channel.service';
 import { HelperService } from '@/helper/helper.service';
@@ -14,6 +15,7 @@ import { CsrfInterceptor } from '@/interceptors/csrf.interceptor';
 import { PluginService } from '@/plugins/plugins.service';
 
 @UseInterceptors(CsrfInterceptor)
+@UseGuards(AuthGuard('jwt'))
 @Controller('i18n')
 export class I18nController {
   constructor(

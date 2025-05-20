@@ -49,10 +49,20 @@ export class SocketIoClient {
   private initialized: boolean = false;
 
   constructor(apiUrl: string, socketConfig?: SocketIoClientConfig) {
+    const token = localStorage.getItem("token");
+    
+    console.log("token from socket init:", token);
+
     this.config = {
       ...SocketIoClient.defaultConfig,
       ...socketConfig,
       autoConnect: false,
+      extraHeaders: {
+        authorization: `bearer ${token}`,
+      },
+      auth: {
+        token,
+      },
     };
     const url = new URL(apiUrl);
 

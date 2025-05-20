@@ -42,6 +42,16 @@ export const useAxiosInstance = () => {
       });
     };
 
+    // Request Interceptor
+    instance.interceptors.request.use((config) => {
+      const token = localStorage.getItem("token");
+
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+
+      return config;
+    });
     // Response Interceptor
     instance.interceptors.response.use(
       (resp) => resp,

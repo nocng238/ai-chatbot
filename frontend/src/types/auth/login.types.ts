@@ -7,6 +7,6 @@
  */
 
 export interface ILoginAttributes {
-  identifier: string;
+  email: string;
   password: string;
 }

@@ -6,14 +6,20 @@
  * 2. All derivative works must include clear attribution to the original creator and software, Hexastack and Hexabot, in a prominent location (e.g., in the software's "About" section, documentation, and README file).
  */
 
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { compareSync } from 'bcryptjs';
+
+import { config } from '@/config';
 
 import { UserService } from './user.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   /**
    * Validates a user by checking if the provided email and password are correct.
@@ -36,5 +42,26 @@ export class AuthService {
       return user;
     }
     return null;
+  }
+
+  async login(email: string, password: string) {
+    const user = await this.validateUser(email, password);
+
+    if (!user) {
+      throw new BadRequestException('Invalid credentials');
+    }
+
+    return {
+      user,
+      access_token: this.jwtService.sign(
+        {
+          id: user.id,
+          email: user.email,
+        },
+        {
+          secret: config.authentication.jwtOptions.secret,
+        },
+      ),
+    };
   }
 }

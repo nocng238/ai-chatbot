@@ -19,7 +19,7 @@ export default function handler(
   res: NextApiResponse<ResponseData>,
 ) {
   res.status(200).json({
-    apiUrl: process.env.NEXT_PUBLIC_API_ORIGIN || "http://localhost:4000",
+    apiUrl: process.env.NEXT_PUBLIC_API_ORIGIN || "http://localhost:3000",
     ssoEnabled: process.env.NEXT_PUBLIC_SSO_ENABLED === "true" || false,
     maxUploadSize: process.env.UPLOAD_MAX_SIZE_IN_BYTES
       ? Number(process.env.UPLOAD_MAX_SIZE_IN_BYTES)

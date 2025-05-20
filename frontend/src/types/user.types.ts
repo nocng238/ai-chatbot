@@ -41,3 +41,10 @@ export interface IUserFull extends IUserStub, IFormat<Format.FULL> {
   roles: IRole[];
   avatar: IAttachment | null;
 }
+
+export interface LoginResponse {
+  user: IUser;
+  access_token: string;
+  token: string;
+  refresh_token: string;
+}

@@ -71,6 +71,8 @@ export class SocketRequest {
   // User information
   user: User;
 
+  token?: string;
+
   // Constructor to initialize a new socket request
   constructor(
     socket: Socket,
@@ -126,6 +128,10 @@ export class SocketRequest {
 
     // Assign the session from the socket's session data
     this.sessionID = socket.data.sessionID;
-    this.session = socket.data.session;
+    this.session = {
+      passport: {
+        user: socket.data.user,
+      },
+    } as any;
   }
 }

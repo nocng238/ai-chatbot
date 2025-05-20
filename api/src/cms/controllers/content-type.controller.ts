@@ -17,8 +17,10 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { CsrfCheck } from '@tekuconcept/nestjs-csrf';
 
 import { CsrfInterceptor } from '@/interceptors/csrf.interceptor';
@@ -36,6 +38,7 @@ import { ContentType } from '../schemas/content-type.schema';
 import { ContentTypeService } from '../services/content-type.service';
 
 @UseInterceptors(CsrfInterceptor)
+@UseGuards(AuthGuard('jwt'))
 @Controller('contenttype')
 export class ContentTypeController extends BaseController<ContentType> {
   constructor(private readonly contentTypeService: ContentTypeService) {

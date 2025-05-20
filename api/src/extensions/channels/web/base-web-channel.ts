@@ -467,6 +467,7 @@ export default abstract class BaseWebChannelHandler<
       gender: 'male',
       country: '',
       labels: [],
+      ownerId:
     };
     const subscriber = await this.subscriberService.create(newProfile);
     // Init session

@@ -20,6 +20,7 @@ import { PermissionController } from './controllers/permission.controller';
 import { RoleController } from './controllers/role.controller';
 import { ReadWriteUserController } from './controllers/user.controller';
 import { LocalAuthGuard } from './guards/local-auth.guard';
+import { JwtStrategy } from './passport/auth-strategy/jwt.stategy';
 import { LocalStrategy } from './passport/auth-strategy/local.strategy';
 import { AuthSerializer } from './passport/session.serializer';
 import { InvitationRepository } from './repositories/invitation.repository';
@@ -55,10 +56,8 @@ import { ValidateAccountService } from './services/validate-account.service';
       PermissionModel,
       AttachmentModel,
     ]),
-    PassportModule.register({
-      session: true,
-    }),
-    JwtModule,
+    PassportModule,
+    JwtModule.register({}),
     forwardRef(() => AttachmentModule),
   ],
   providers: [
@@ -82,6 +81,7 @@ import { ValidateAccountService } from './services/validate-account.service';
     InvitationService,
     PasswordResetService,
     ValidateAccountService,
+    JwtStrategy,
   ],
   controllers: [
     LocalAuthController,

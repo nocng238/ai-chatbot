@@ -23,6 +23,8 @@ export class AuthSerializer extends PassportSerializer {
     user: User,
     done: (err: Error | null, user: SessionUser) => void,
   ) {
+    console.log('serializeUser', user);
+
     done(null, {
       id: user.id,
       first_name: user.first_name,
@@ -34,6 +36,8 @@ export class AuthSerializer extends PassportSerializer {
     payload: SessionUser,
     done: (err: Error | null, user: SessionUser | null) => void,
   ) {
+    console.log('deserializeUser', payload);
+
     const user = payload.id ? await this.userService.findOne(payload.id) : null;
     done(null, user);
   }

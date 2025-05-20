@@ -23,7 +23,8 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { CsrfCheck, CsrfGen, CsrfGenAuth } from '@tekuconcept/nestjs-csrf';
+import { AuthGuard } from '@nestjs/passport';
+import { CsrfCheck, CsrfGen } from '@tekuconcept/nestjs-csrf';
 import { Request, Response } from 'express';
 import { Session as ExpressSession } from 'express-session';
 
@@ -34,7 +35,7 @@ import { Roles } from '@/utils/decorators/roles.decorator';
 
 import { InvitationCreateDto } from '../dto/invitation.dto';
 import { UserCreateDto } from '../dto/user.dto';
-import { LocalAuthGuard } from '../guards/local-auth.guard';
+import { AuthService } from '../services/auth.service';
 import { InvitationService } from '../services/invitation.service';
 import { UserService } from '../services/user.service';
 import { ValidateAccountService } from '../services/validate-account.service';
@@ -44,18 +45,6 @@ export class BaseAuthController {
   private readonly eventEmitter: EventEmitter2;
 
   constructor(protected readonly logger: LoggerService) {}
-
-  /**
-   * Fetches details of the currently authenticated user.
-   *
-   * @param req - The request object which includes user details.
-   *
-   * @returns The user object from the request.
-   */
-  @Get('me')
-  me(@Req() req: Request) {
-    return req.user;
-  }
 
   /**
    * Handles user logout by clearing the session and cookies.
@@ -94,6 +83,7 @@ export class LocalAuthController extends BaseAuthController {
     private readonly userService: UserService,
     private readonly validateAccountService: ValidateAccountService,
     private readonly invitationService: InvitationService,
+    private readonly authService: AuthService,
   ) {
     super(logger);
   }
@@ -105,13 +95,14 @@ export class LocalAuthController extends BaseAuthController {
    *
    * @returns The logged-in user object.
    */
-  @UseGuards(LocalAuthGuard)
+  // @UseGuards(LocalAuthGuard)
   @Roles('public')
   @Post('local')
-  @CsrfCheck(false)
-  @CsrfGenAuth(true)
-  login(@Req() req: Request) {
-    return req.user;
+  // @CsrfCheck(false)
+  // @CsrfGenAuth(true)
+  login(@Body() body: any) {
+    const { password, identifier } = body;
+    return this.authService.login(identifier, password);
   }
 
   /**
@@ -184,5 +175,19 @@ export class LocalAuthController extends BaseAuthController {
       );
       throw new InternalServerErrorException('Could not send email');
     }
+  }
+
+  /**
+   * Fetches details of the currently authenticated user.
+   *
+   * @param req - The request object which includes user details.
+   *
+   * @returns The user object from the request.
+   */
+  @UseGuards(AuthGuard('jwt'))
+  @Get('me')
+  me(@Req() req: Request) {
+    this.logger.debug('Fetching user details', req.user);
+    return req.user;
   }
 }

@@ -18,8 +18,10 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { CsrfCheck } from '@tekuconcept/nestjs-csrf';
 
 import { CsrfInterceptor } from '@/interceptors/csrf.interceptor';
@@ -36,6 +38,7 @@ import { LanguageService } from '../services/language.service';
 import { TranslationService } from '../services/translation.service';
 
 @UseInterceptors(CsrfInterceptor)
+@UseGuards(AuthGuard('jwt'))
 @Controller('translation')
 export class TranslationController extends BaseController<Translation> {
   constructor(

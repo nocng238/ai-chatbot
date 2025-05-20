@@ -7,6 +7,7 @@
  */
 
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
+import { JwtService } from '@nestjs/jwt';
 import {
   ConnectedSocket,
   MessageBody,
@@ -18,7 +19,6 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import cookie from 'cookie';
-import * as cookieParser from 'cookie-parser';
 import signature from 'cookie-signature';
 import { Session as ExpressSession, SessionData } from 'express-session';
 import { Server, Socket } from 'socket.io';
@@ -50,6 +50,7 @@ export class WebsocketGateway
     private readonly logger: LoggerService,
     private readonly eventEmitter: EventEmitter2,
     private readonly socketEventDispatcherService: SocketEventDispatcherService,
+    private readonly jwtService: JwtService,
   ) {}
 
   @WebSocketServer() io: Server;
@@ -206,52 +207,130 @@ export class WebsocketGateway
 
     // Handle session
     this.io.use((client, next) => {
-      this.logger.verbose('Client connected, attempting to load session.');
+      this.logger.verbose('Client connected, attempting to authenticate.');
       try {
-        const { searchParams } = new URL(`ws://localhost${client.request.url}`);
-
-        if (client.request.headers.cookie) {
-          const cookies = cookie.parse(client.request.headers.cookie);
-          if (cookies && config.session.name in cookies) {
-            const sessionID = cookieParser.signedCookie(
-              cookies[config.session.name],
-              config.session.secret,
-            );
-            if (sessionID) {
-              return this.loadSession(sessionID, (err, session) => {
-                if (err || !session) {
-                  this.logger.warn(
-                    'Unable to load session, creating a new one ...',
-                    err,
-                  );
-                  if (searchParams.get('channel') !== 'console-channel') {
-                    return this.createAndStoreSession(client, next);
-                  } else {
-                    return next(new Error('Unauthorized: Unknown session ID'));
-                  }
-                }
-                client.data.session = session;
-                client.data.sessionID = sessionID;
-                next();
-              });
-            } else {
-              return next(new Error('Unable to parse session ID from cookie'));
-            }
-          }
-        } else if (searchParams.get('channel') === 'web-channel') {
-          return this.createAndStoreSession(client, next);
-        } else {
-          return next(new Error('Unauthorized to connect to WS'));
+        if (client.data?.user) {
+          this.logger.log(
+            `Client already authenticated: ${JSON.stringify(client.data.user)}`,
+          );
+          return next();
         }
+        // Get token from headers or query params
+        const token = this.extractTokenFromHeaders(client);
+
+        if (!token) {
+          return next(new Error('No token provided'));
+        }
+
+        // if (!token) {
+        //   // Fall back to session if no token (for backward compatibility)
+        //   return this.handleSessionAuth(client, next);
+        // }
+
+        // Verify JWT token
+        const decoded = this.verifyToken(token);
+        if (!decoded) {
+          return next(new Error('Invalid JWT token'));
+        }
+
+        // Store user data from JWT
+        client.data.user = decoded;
+        client.data.authenticated = true;
+
+        // Store token for later use if needed
+        client.data.token = token;
+
+        return next();
       } catch (e) {
-        this.logger.warn('Something unexpected happening');
-        return next(e);
+        this.logger.warn('Authentication error', e);
+        return next(new Error('Authentication failed'));
       }
     });
+    // this.io.use((client, next) => {
+    //   this.logger.verbose('Client connected, attempting to load session.');
+    //   try {
+    //     const { searchParams } = new URL(`ws://localhost${client.request.url}`);
+
+    //     if (client.request.headers.cookie) {
+    //       const cookies = cookie.parse(client.request.headers.cookie);
+    //       if (cookies && config.session.name in cookies) {
+    //         const sessionID = cookieParser.signedCookie(
+    //           cookies[config.session.name],
+    //           config.session.secret,
+    //         );
+    //         if (sessionID) {
+    //           return this.loadSession(sessionID, (err, session) => {
+    //             if (err || !session) {
+    //               this.logger.warn(
+    //                 'Unable to load session, creating a new one ...',
+    //                 err,
+    //               );
+    //               if (searchParams.get('channel') !== 'console-channel') {
+    //                 return this.createAndStoreSession(client, next);
+    //               } else {
+    //                 return next(new Error('Unauthorized: Unknown session ID'));
+    //               }
+    //             }
+    //             client.data.session = session;
+    //             client.data.sessionID = sessionID;
+    //             next();
+    //           });
+    //         } else {
+    //           return next(new Error('Unable to parse session ID from cookie'));
+    //         }
+    //       }
+    //     } else if (searchParams.get('channel') === 'web-channel') {
+    //       return this.createAndStoreSession(client, next);
+    //     } else {
+    //       return next(new Error('Unauthorized to connect to WS'));
+    //     }
+    //   } catch (e) {
+    //     this.logger.warn('Something unexpected happening');
+    //     return next(e);
+    //   }
+    // });
+  }
+
+  extractTokenFromHeaders(client: Socket): string | null {
+    const token = client.handshake.auth.token;
+
+    return token ?? null;
+  }
+
+  // Session auth for backward compatibility
+  // private handleSessionAuth(client: Socket, next: (err?: Error) => void): void {
+  //   const { searchParams } = new URL(`ws://localhost${client.request.url}`);
+
+  //   if (client.request.headers.cookie) {
+  //     // Existing session authentication code...
+  //     const cookies = cookie.parse(client.request.headers.cookie);
+  //     // Rest of your current session auth logic
+  //     // ...
+  //   } else if (searchParams.get('channel') === 'web-channel') {
+  //     return this.createAndStoreSession(client, next);
+  //   } else {
+  //     return next(new Error('Unauthorized to connect to WS'));
+  //   }
+  // }
+
+  private verifyToken(token: string): any {
+    try {
+      const payload = this.jwtService.verify(token, {
+        secret: config.authentication.jwtOptions.secret,
+      });
+
+      console.log('payload from socket', payload);
+      return payload;
+    } catch (err) {
+      this.logger.error('JWT verification failed', err);
+      return null;
+    }
   }
 
   handleConnection(client: Socket, ..._args: any[]): void {
     const { sockets } = this.io.sockets;
+    this.logger.log('client', client);
+
     this.logger.log(`Client id: ${client.id} connected`);
     this.logger.debug(`Number of connected clients: ${sockets?.size}`);
 
@@ -299,6 +378,7 @@ export class WebsocketGateway
     @MessageBody(new IOMessagePipe()) payload: IOIncomingMessage,
     @ConnectedSocket() client: Socket,
   ) {
+    this.logger.log(`Handling GET request: ${JSON.stringify(client.data)}`);
     const request = new SocketRequest(client, 'get', payload);
     const response = new SocketResponse();
     this.socketEventDispatcherService.handleEvent(

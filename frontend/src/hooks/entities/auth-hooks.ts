@@ -14,9 +14,9 @@ import { EntityType, TMutationOptions } from "@/services/types";
 import { ILoginAttributes } from "@/types/auth/login.types";
 import {
   IProfileAttributes,
-  IUser,
   IUserAttributes,
   IUserStub,
+  LoginResponse,
 } from "@/types/user.types";
 import { useSocket } from "@/websocket/socket-hooks";
 
@@ -28,7 +28,7 @@ import { useTranslate } from "../useTranslate";
 
 export const useLogin = (
   options?: Omit<
-    TMutationOptions<IUser, Error, ILoginAttributes>,
+    TMutationOptions<LoginResponse, Error, ILoginAttributes>,
     "mutationFn"
   >,
 ) => {

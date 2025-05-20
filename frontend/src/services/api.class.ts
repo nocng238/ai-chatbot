@@ -21,6 +21,7 @@ import {
   IUser,
   IUserAttributes,
   IUserStub,
+  LoginResponse,
 } from "@/types/user.types";
 
 import { EntityType, Format, TCount, TypeByFormat } from "./types";
@@ -88,12 +89,14 @@ export class ApiClient {
 
   async login(payload: ILoginAttributes) {
     const { data } = await this.request.post<
-      IUser,
-      AxiosResponse<IUser>,
+      LoginResponse,
+      AxiosResponse<{ data: LoginResponse }>,
       ILoginAttributes
-    >(ROUTES.LOGIN, payload);
+    >("/api/v1/auth/user/login", payload, {
+      baseURL: "http://localhost:3011",
+    });
 
-    return data;
+    return data.data;
   }
 
   async logout() {
@@ -309,8 +312,8 @@ export class EntityApiClient<TAttr, TBasic, TFull> extends ApiClient {
       `${ROUTES[this.type]}/import`,
       formData,
       {
-        params: { _csrf , ...params },
-      }
+        params: { _csrf, ...params },
+      },
     );
 
     return data;

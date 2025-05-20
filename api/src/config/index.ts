@@ -24,7 +24,8 @@ export const config: Config = {
     trustProxy: process.env.HTTPS_ENABLED === 'true', // Nginx in use ?
     cors: {
       allRoutes: true,
-      headers: 'content-type,x-xsrf-token,x-csrf-token',
+      headers:
+        'content-type,x-xsrf-token,x-csrf-token,Authorization,access-control-allow-origin',
       methods: ['GET', 'PATCH', 'POST', 'DELETE', 'OPTIONS', 'HEAD'],
       allowOrigins: process.env.FRONTEND_ORIGIN
         ? process.env.FRONTEND_ORIGIN.split(',').map((origin) => origin.trim())

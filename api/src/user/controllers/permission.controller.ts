@@ -16,8 +16,10 @@ import {
   Param,
   Post,
   Query,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { CsrfCheck } from '@tekuconcept/nestjs-csrf';
 
 import { CsrfInterceptor } from '@/interceptors/csrf.interceptor';
@@ -38,6 +40,7 @@ import { PermissionService } from '../services/permission.service';
 import { RoleService } from '../services/role.service';
 
 @UseInterceptors(CsrfInterceptor)
+@UseGuards(AuthGuard('jwt'))
 @Controller('permission')
 export class PermissionController extends BaseController<
   Permission,

@@ -18,8 +18,10 @@ import {
   Post,
   Query,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CsrfCheck } from '@tekuconcept/nestjs-csrf';
 
@@ -43,6 +45,7 @@ import { ContentTypeService } from './../services/content-type.service';
 import { ContentService } from './../services/content.service';
 
 @UseInterceptors(CsrfInterceptor)
+@UseGuards(AuthGuard('jwt'))
 @Controller('content')
 export class ContentController extends BaseController<
   Content,

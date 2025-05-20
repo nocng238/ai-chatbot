@@ -26,14 +26,15 @@ const isMenuItemAllowed = (
 ): boolean => {
   const requiredPermissions = Object.entries(menuItem.requires || {});
 
-  return (
-    requiredPermissions.length === 0 ||
-    requiredPermissions.every(([entityType, actions]) =>
-      actions.every((action) =>
-        hasPermission(entityType as EntityType, action),
-      ),
-    )
-  );
+  // return (
+  //   requiredPermissions.length === 0 ||
+  //   requiredPermissions.every(([entityType, actions]) =>
+  //     actions.every((action) =>
+  //       hasPermission(entityType as EntityType, action),
+  //     ),
+  //   )
+  // );
+  return true;
 };
 /**
  * Filters menu items based on user permissions.

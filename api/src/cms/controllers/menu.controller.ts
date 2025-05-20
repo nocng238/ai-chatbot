@@ -17,8 +17,10 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { CsrfCheck } from '@tekuconcept/nestjs-csrf';
 
 import { CsrfInterceptor } from '@/interceptors/csrf.interceptor';
@@ -33,6 +35,7 @@ import { Menu, MenuFull, MenuPopulate, MenuStub } from '../schemas/menu.schema';
 import { MenuService } from '../services/menu.service';
 
 @UseInterceptors(CsrfInterceptor)
+@UseGuards(AuthGuard('jwt'))
 @Controller('menu')
 export class MenuController extends BaseController<
   Menu,

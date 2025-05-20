@@ -22,8 +22,10 @@ import {
   Session,
   UnauthorizedException,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CsrfCheck } from '@tekuconcept/nestjs-csrf';
 import { Request } from 'express';
@@ -64,6 +66,7 @@ import { UserService } from '../services/user.service';
 import { ValidateAccountService } from '../services/validate-account.service';
 
 @UseInterceptors(CsrfInterceptor)
+@UseGuards(AuthGuard('jwt'))
 @Controller('user')
 export class ReadOnlyUserController extends BaseController<
   User,

@@ -65,6 +65,9 @@ export class SocketIoClient {
       ...SocketIoClient.defaultConfig,
       ...socketConfig,
       autoConnect: false,
+      auth: {
+        token: localStorage.getItem("token") || "",
+      },
     };
     const url = new URL(apiUrl);
 

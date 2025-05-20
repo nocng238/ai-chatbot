@@ -11,6 +11,7 @@ import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 export const SocketReq = createParamDecorator(
   (data: unknown, ctx: ExecutionContext) => {
     const client = ctx.switchToWs().getClient<any>();
-    return client.request; // Assuming `request` is attached to the client object
+
+    return client.data; // Assuming `data` is attached to the client object
   },
 );

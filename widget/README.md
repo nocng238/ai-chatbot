@@ -103,7 +103,7 @@ To prevent the website css from conflicting with the chat widget css, we can lev
   // Render the widget inside the shadow root
   ReactDOM.render(
     React.createElement(HexabotWidget, {
-      apiUrl: 'https://api.yourdomain.com',
+      apiUrl: 'https://api.yourdomain.com?ownerId="123"',
       channel: 'web-channel',
       token: 'token123',
     }),
