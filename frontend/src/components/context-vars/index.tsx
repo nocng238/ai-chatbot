@@ -26,7 +26,6 @@ import { useDeleteMany } from "@/hooks/crud/useDeleteMany";
 import { useFind } from "@/hooks/crud/useFind";
 import { useUpdate } from "@/hooks/crud/useUpdate";
 import { useDialogs } from "@/hooks/useDialogs";
-import { useHasPermission } from "@/hooks/useHasPermission";
 import { useSearch } from "@/hooks/useSearch";
 import { useToast } from "@/hooks/useToast";
 import { useTranslate } from "@/hooks/useTranslate";
@@ -42,7 +41,6 @@ export const ContextVars = () => {
   const { t } = useTranslate();
   const { toast } = useToast();
   const dialogs = useDialogs();
-  const hasPermission = useHasPermission();
   const { onSearch, searchPayload } = useSearch<IContextVar>({
     $iLike: ["label"],
   });
@@ -122,9 +120,6 @@ export const ContextVars = () => {
           checked={value}
           color="primary"
           inputProps={{ "aria-label": "primary checkbox" }}
-          disabled={
-            !hasPermission(EntityType.CONTEXT_VAR, PermissionAction.UPDATE)
-          }
           onChange={() => {
             updateContextVar({
               id: row.id,
@@ -176,18 +171,16 @@ export const ContextVars = () => {
           <Grid item>
             <FilterTextfield onChange={onSearch} />
           </Grid>
-          {hasPermission(EntityType.CONTEXT_VAR, PermissionAction.CREATE) ? (
-            <Grid item>
-              <Button
-                startIcon={<AddIcon />}
-                variant="contained"
-                sx={{ float: "right" }}
-                onClick={() => dialogs.open(ContextVarFormDialog, null)}
-              >
-                {t("button.add")}
-              </Button>
-            </Grid>
-          ) : null}
+          <Grid item>
+            <Button
+              startIcon={<AddIcon />}
+              variant="contained"
+              sx={{ float: "right" }}
+              onClick={() => dialogs.open(ContextVarFormDialog, null)}
+            >
+              {t("button.add")}
+            </Button>
+          </Grid>
           <Grid item>
             <Button
               startIcon={<DeleteIcon />}

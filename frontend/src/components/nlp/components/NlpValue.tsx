@@ -28,7 +28,6 @@ import { useDeleteMany } from "@/hooks/crud/useDeleteMany";
 import { useFind } from "@/hooks/crud/useFind";
 import { useGet } from "@/hooks/crud/useGet";
 import { useDialogs } from "@/hooks/useDialogs";
-import { useHasPermission } from "@/hooks/useHasPermission";
 import { useSearch } from "@/hooks/useSearch";
 import { useToast } from "@/hooks/useToast";
 import { useTranslate } from "@/hooks/useTranslate";
@@ -36,7 +35,6 @@ import { PageHeader } from "@/layout/content/PageHeader";
 import { EntityType, Format } from "@/services/types";
 import { NlpLookups } from "@/types/nlp-entity.types";
 import { INlpValue } from "@/types/nlp-value.types";
-import { PermissionAction } from "@/types/permission.types";
 import { getDateTimeFormatter } from "@/utils/date";
 
 import { NlpValueFormDialog } from "./NlpValueFormDialog";
@@ -47,7 +45,6 @@ export const NlpValues = ({ entityId }: { entityId: string }) => {
   const dialogs = useDialogs();
   const router = useRouter();
   const [direction, setDirection] = useState<"up" | "down">("up");
-  const hasPermission = useHasPermission();
   const { data: nlpEntity, refetch: refetchEntity } = useGet(entityId, {
     entity: EntityType.NLP_ENTITY,
     format: Format.FULL,
@@ -55,7 +52,7 @@ export const NlpValues = ({ entityId }: { entityId: string }) => {
   const canHaveSynonyms = nlpEntity?.lookups?.[0] === NlpLookups.keywords;
   const { onSearch, searchPayload } = useSearch<INlpValue>({
     $eq: [{ entity: entityId }],
-    $or: ["doc", "value"]
+    $or: ["doc", "value"],
   });
   const { dataGridProps } = useFind(
     { entity: EntityType.NLP_VALUE },
@@ -103,7 +100,7 @@ export const NlpValues = ({ entityId }: { entityId: string }) => {
     ],
     t("label.operations"),
   );
-  const synonymsColumn =  {
+  const synonymsColumn = {
     flex: 3,
     field: "synonyms",
     headerName: t("label.synonyms"),
@@ -212,19 +209,14 @@ export const NlpValues = ({ entityId }: { entityId: string }) => {
                   <FilterTextfield onChange={onSearch} />
                 </Grid>
                 <ButtonGroup sx={{ marginLeft: "auto" }}>
-                  {hasPermission(
-                    EntityType.NLP_VALUE,
-                    PermissionAction.CREATE,
-                  ) ? (
-                    <Button
-                      startIcon={<AddIcon />}
-                      variant="contained"
-                      sx={{ float: "right" }}
-                      onClick={() => dialogs.open(NlpValueFormDialog, null)}
-                    >
-                      {t("button.add")}
-                    </Button>
-                  ) : null}
+                  <Button
+                    startIcon={<AddIcon />}
+                    variant="contained"
+                    sx={{ float: "right" }}
+                    onClick={() => dialogs.open(NlpValueFormDialog, null)}
+                  >
+                    {t("button.add")}
+                  </Button>
                   {selectedNlpValues.length > 0 && (
                     <Grid item>
                       <Button

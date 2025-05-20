@@ -25,7 +25,7 @@ import { useDelete } from "@/hooks/crud/useDelete";
 import { useDeleteMany } from "@/hooks/crud/useDeleteMany";
 import { useFind } from "@/hooks/crud/useFind";
 import { useDialogs } from "@/hooks/useDialogs";
-import { useHasPermission } from "@/hooks/useHasPermission";
+// import { useHasPermission } from "@/hooks/useHasPermission";
 import { useSearch } from "@/hooks/useSearch";
 import { useToast } from "@/hooks/useToast";
 import { useTranslate } from "@/hooks/useTranslate";
@@ -42,7 +42,6 @@ export const Categories = () => {
   const { t } = useTranslate();
   const { toast } = useToast();
   const dialogs = useDialogs();
-  const hasPermission = useHasPermission();
   const { onSearch, searchPayload } = useSearch<ICategory>({
     $iLike: ["label"],
   });
@@ -144,18 +143,16 @@ export const Categories = () => {
             <Grid item>
               <FilterTextfield onChange={onSearch} />
             </Grid>
-            {hasPermission(EntityType.CATEGORY, PermissionAction.CREATE) ? (
-              <Grid item>
-                <Button
-                  startIcon={<AddIcon />}
-                  variant="contained"
-                  sx={{ float: "right" }}
-                  onClick={() => dialogs.open(CategoryFormDialog, null)}
-                >
-                  {t("button.add")}
-                </Button>
-              </Grid>
-            ) : null}
+            <Grid item>
+              <Button
+                startIcon={<AddIcon />}
+                variant="contained"
+                sx={{ float: "right" }}
+                onClick={() => dialogs.open(CategoryFormDialog, null)}
+              >
+                {t("button.add")}
+              </Button>
+            </Grid>
             <Button
               color="error"
               variant="contained"

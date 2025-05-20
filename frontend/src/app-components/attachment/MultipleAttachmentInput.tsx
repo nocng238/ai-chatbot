@@ -9,10 +9,8 @@
 import { Box, Button, FormHelperText, FormLabel } from "@mui/material";
 import { forwardRef, useState } from "react";
 
-import { useHasPermission } from "@/hooks/useHasPermission";
-import { EntityType } from "@/services/types";
+// import { useHasPermission } from "@/hooks/useHasPermission";
 import { AttachmentResourceRef, IAttachment } from "@/types/attachment.types";
-import { PermissionAction } from "@/types/permission.types";
 
 import AttachmentThumbnail from "./AttachmentThumbnail";
 import AttachmentUploader from "./AttachmentUploader";
@@ -51,7 +49,7 @@ const MultipleAttachmentInput = forwardRef<
   ) => {
     const [attachments, setAttachments] = useState<string[]>(value);
     const [uploadKey, setUploadKey] = useState(Date.now());
-    const hasPermission = useHasPermission();
+    // const hasPermission = useHasPermission();
     const handleChange = (attachment?: IAttachment | null, index?: number) => {
       const updatedAttachments = [...attachments];
 
@@ -102,15 +100,13 @@ const MultipleAttachmentInput = forwardRef<
             </Button>
           </Box>
         ))}
-        {hasPermission(EntityType.ATTACHMENT, PermissionAction.CREATE) && (
-          <AttachmentUploader
-            key={uploadKey}
-            accept={accept}
-            enableMediaLibrary={enableMediaLibrary}
-            onChange={(attachment) => handleChange(attachment)}
-            resourceRef={resourceRef}
-          />
-        )}
+        <AttachmentUploader
+          key={uploadKey}
+          accept={accept}
+          enableMediaLibrary={enableMediaLibrary}
+          onChange={(attachment) => handleChange(attachment)}
+          resourceRef={resourceRef}
+        />
         {helperText && (
           <FormHelperText error={error}>{helperText}</FormHelperText>
         )}

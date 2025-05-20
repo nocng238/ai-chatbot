@@ -10,10 +10,9 @@ import { Box, FormHelperText, FormLabel } from "@mui/material";
 import { forwardRef } from "react";
 
 import { useGet } from "@/hooks/crud/useGet";
-import { useHasPermission } from "@/hooks/useHasPermission";
+// import { useHasPermission } from "@/hooks/useHasPermission";
 import { EntityType } from "@/services/types";
 import { AttachmentResourceRef, IAttachment } from "@/types/attachment.types";
-import { PermissionAction } from "@/types/permission.types";
 
 import AttachmentThumbnail from "./AttachmentThumbnail";
 import AttachmentUploader from "./AttachmentUploader";
@@ -47,7 +46,7 @@ const AttachmentInput = forwardRef<HTMLDivElement, AttachmentThumbnailProps>(
     },
     ref,
   ) => {
-    const hasPermission = useHasPermission();
+    // const hasPermission = useHasPermission();
     const handleChange = (attachment?: IAttachment | null) => {
       onChange && onChange(attachment?.id || null, attachment?.type || null);
     };
@@ -78,14 +77,14 @@ const AttachmentInput = forwardRef<HTMLDivElement, AttachmentThumbnailProps>(
             format={format}
             size={size}
           />
-        ) : hasPermission(EntityType.ATTACHMENT, PermissionAction.CREATE) ? (
+        ) : (
           <AttachmentUploader
             accept={accept}
             enableMediaLibrary={enableMediaLibrary}
             onChange={handleChange}
             resourceRef={resourceRef}
           />
-        ) : null}
+        )}
         {helperText ? (
           <FormHelperText error={error}>{helperText}</FormHelperText>
         ) : null}

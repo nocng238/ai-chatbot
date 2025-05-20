@@ -22,7 +22,6 @@ import { DataGrid } from "@/app-components/tables/DataGrid";
 import { useDelete } from "@/hooks/crud/useDelete";
 import { useFind } from "@/hooks/crud/useFind";
 import { useDialogs } from "@/hooks/useDialogs";
-import { useHasPermission } from "@/hooks/useHasPermission";
 import { useSearch } from "@/hooks/useSearch";
 import { useToast } from "@/hooks/useToast";
 import { useTranslate } from "@/hooks/useTranslate";
@@ -57,7 +56,6 @@ export const ContentTypes = () => {
       toast.error(error.message || t("message.internal_server_error"));
     },
   });
-  const hasPermission = useHasPermission();
   const actionColumns = useActionColumns<IContentType>(
     EntityType.CONTENT_TYPE,
     [
@@ -99,18 +97,16 @@ export const ContentTypes = () => {
           <Grid item>
             <FilterTextfield onChange={onSearch} />
           </Grid>
-          {hasPermission(EntityType.CONTENT_TYPE, PermissionAction.CREATE) ? (
-            <Grid item>
-              <Button
-                startIcon={<AddIcon />}
-                variant="contained"
-                onClick={() => dialogs.open(ContentTypeFormDialog, null)}
-                sx={{ float: "right" }}
-              >
-                {t("button.add")}
-              </Button>
-            </Grid>
-          ) : null}
+          <Grid item>
+            <Button
+              startIcon={<AddIcon />}
+              variant="contained"
+              onClick={() => dialogs.open(ContentTypeFormDialog, null)}
+              sx={{ float: "right" }}
+            >
+              {t("button.add")}
+            </Button>
+          </Grid>
         </Grid>
       </PageHeader>
       <Grid item xs={12}>

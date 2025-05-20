@@ -25,7 +25,6 @@ import { useDelete } from "@/hooks/crud/useDelete";
 import { useDeleteMany } from "@/hooks/crud/useDeleteMany";
 import { useFind } from "@/hooks/crud/useFind";
 import { useDialogs } from "@/hooks/useDialogs";
-import { useHasPermission } from "@/hooks/useHasPermission";
 import { useSearch } from "@/hooks/useSearch";
 import { useToast } from "@/hooks/useToast";
 import { useTranslate } from "@/hooks/useTranslate";
@@ -41,7 +40,6 @@ export const Labels = () => {
   const { t } = useTranslate();
   const { toast } = useToast();
   const dialogs = useDialogs();
-  const hasPermission = useHasPermission();
   const { onSearch, searchPayload } = useSearch<ILabel>({
     $or: ["name", "title"],
   });
@@ -171,18 +169,16 @@ export const Labels = () => {
           <Grid item>
             <FilterTextfield onChange={onSearch} />
           </Grid>
-          {hasPermission(EntityType.LABEL, PermissionAction.CREATE) ? (
-            <Grid item>
-              <Button
-                startIcon={<AddIcon />}
-                variant="contained"
-                sx={{ float: "right" }}
-                onClick={() => dialogs.open(LabelFormDialog, null)}
-              >
-                {t("button.add")}
-              </Button>
-            </Grid>
-          ) : null}
+          <Grid item>
+            <Button
+              startIcon={<AddIcon />}
+              variant="contained"
+              sx={{ float: "right" }}
+              onClick={() => dialogs.open(LabelFormDialog, null)}
+            >
+              {t("button.add")}
+            </Button>
+          </Grid>
           <Button
             color="error"
             variant="contained"

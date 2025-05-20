@@ -22,7 +22,6 @@ import { DataGrid } from "@/app-components/tables/DataGrid";
 import { useDelete } from "@/hooks/crud/useDelete";
 import { useFind } from "@/hooks/crud/useFind";
 import { useDialogs } from "@/hooks/useDialogs";
-import { useHasPermission } from "@/hooks/useHasPermission";
 import { useSearch } from "@/hooks/useSearch";
 import { useToast } from "@/hooks/useToast";
 import { useTranslate } from "@/hooks/useTranslate";
@@ -39,7 +38,6 @@ export const Roles = () => {
   const { t } = useTranslate();
   const { toast } = useToast();
   const dialogs = useDialogs();
-  const hasPermission = useHasPermission();
   const { onSearch, searchPayload } = useSearch<IRole>({
     $iLike: ["name"],
   });
@@ -136,20 +134,18 @@ export const Roles = () => {
           <Grid item>
             <FilterTextfield onChange={onSearch} />
           </Grid>
-          {hasPermission(EntityType.ROLE, PermissionAction.CREATE) ? (
-            <Grid item>
-              <Button
-                startIcon={<AddIcon />}
-                variant="contained"
-                sx={{
-                  float: "right",
-                }}
-                onClick={() => dialogs.open(RoleFormDialog, null)}
-              >
-                {t("button.add")}
-              </Button>
-            </Grid>
-          ) : null}
+          <Grid item>
+            <Button
+              startIcon={<AddIcon />}
+              variant="contained"
+              sx={{
+                float: "right",
+              }}
+              onClick={() => dialogs.open(RoleFormDialog, null)}
+            >
+              {t("button.add")}
+            </Button>
+          </Grid>
         </Grid>
       </PageHeader>
       <Grid item xs={12}>

@@ -9,7 +9,15 @@
 import { faAlignLeft } from "@fortawesome/free-solid-svg-icons";
 import AddIcon from "@mui/icons-material/Add";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { Button, ButtonGroup, Chip, Grid, Paper, Switch, Typography } from "@mui/material";
+import {
+  Button,
+  ButtonGroup,
+  Chip,
+  Grid,
+  Paper,
+  Switch,
+  Typography,
+} from "@mui/material";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useQueryClient } from "react-query";
@@ -30,7 +38,6 @@ import { useGet, useGetFromCache } from "@/hooks/crud/useGet";
 import { useImport } from "@/hooks/crud/useImport";
 import { useUpdate } from "@/hooks/crud/useUpdate";
 import { useDialogs } from "@/hooks/useDialogs";
-import { useHasPermission } from "@/hooks/useHasPermission";
 import { useSearch } from "@/hooks/useSearch";
 import { useToast } from "@/hooks/useToast";
 import { useTranslate } from "@/hooks/useTranslate";
@@ -53,7 +60,6 @@ export const Contents = () => {
     $eq: [{ entity: String(query.id) }],
     $iLike: ["title"],
   });
-  const hasPermission = useHasPermission();
   const { dataGridProps } = useFind(
     { entity: EntityType.CONTENT, format: Format.FULL },
     {
@@ -111,9 +117,7 @@ export const Contents = () => {
           predicate: ({ queryKey }) => {
             const [_qType, qEntity] = queryKey;
 
-            return (
-              isSameEntity(qEntity, EntityType.CONTENT)
-            );
+            return isSameEntity(qEntity, EntityType.CONTENT);
           },
         });
         if (data.length) {
@@ -123,13 +127,13 @@ export const Contents = () => {
         }
       },
     },
-    { idTargetContentType: contentType?.id }
+    { idTargetContentType: contentType?.id },
   );
   const handleImportChange = (file: File) => {
     importDataset(file);
   };
-  
-return (
+
+  return (
     <Grid container flexDirection="column" gap={3}>
       <Grid item height="fit-content" container>
         <Link href="/content/types">
@@ -149,8 +153,7 @@ return (
             <Grid item>
               <FilterTextfield onChange={onSearch} />
             </Grid>
-            {hasPermission(EntityType.CONTENT, PermissionAction.CREATE) ? (
-              <ButtonGroup sx={{ marginLeft: "auto" }}>
+            <ButtonGroup sx={{ marginLeft: "auto" }}>
               <Grid item>
                 <Button
                   startIcon={<AddIcon />}
@@ -159,20 +162,19 @@ return (
                     dialogs.open(ContentFormDialog, { contentType })
                   }
                   sx={{ float: "right" }}
-                  >
-                    {t("button.add")}
-                  </Button>
-                </Grid>
-                <Grid item>
-                  <FileUploadButton
+                >
+                  {t("button.add")}
+                </Button>
+              </Grid>
+              <Grid item>
+                <FileUploadButton
                   accept="text/csv"
                   label={t("button.import")}
                   onChange={handleImportChange}
                   isLoading={isLoading}
                 />
-                </Grid>
-              </ButtonGroup>
-            ) : null}
+              </Grid>
+            </ButtonGroup>
           </Grid>
         </PageHeader>
       </Grid>
@@ -210,12 +212,6 @@ return (
                         checked={params.value}
                         color="primary"
                         inputProps={{ "aria-label": "primary checkbox" }}
-                        disabled={
-                          !hasPermission(
-                            EntityType.CONTENT,
-                            PermissionAction.UPDATE,
-                          )
-                        }
                         onChange={() => {
                           updateContent({
                             id: params.row.id,

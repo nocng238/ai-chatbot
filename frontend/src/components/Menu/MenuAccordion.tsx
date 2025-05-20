@@ -30,13 +30,11 @@ import { AnimatedChevron } from "@/app-components/icons/AnimatedChevron";
 import { UnifiedIcon } from "@/app-components/icons/UnifiedIcon";
 import { TMenuItem } from "@/app-components/menus/Sidebar";
 import { useGetFromCache } from "@/hooks/crud/useGet";
-import { useHasPermission } from "@/hooks/useHasPermission";
 import { useTranslate } from "@/hooks/useTranslate";
 import { theme } from "@/layout/themes/theme";
 import { EntityType } from "@/services/types";
 import { IMenuNode } from "@/types/menu-tree.types";
 import { MenuType } from "@/types/menu.types";
-import { PermissionAction } from "@/types/permission.types";
 import { SXStyleOptions } from "@/utils/SXStyleOptions";
 
 const StyledButton = styled(Button)(({ theme }) => ({
@@ -104,7 +102,6 @@ const MenuItem: FC<MenuAccordionProps> = ({
   onDelete,
 }) => {
   const { t } = useTranslate();
-  const hasPermission = useHasPermission();
 
   return (
     <Box
@@ -186,46 +183,43 @@ const MenuItem: FC<MenuAccordionProps> = ({
           height: "32px",
         }}
       >
-        {menu.type === "nested" &&
-        hasPermission(EntityType.MENU, PermissionAction.CREATE) ? (
-          <StyledButton
-            startIcon={<PlaylistAddRoundedIcon sx={{ opacity: 0.6 }} />}
-            onClick={(event) => {
-              onAppend(menu.id);
-              event.stopPropagation();
-            }}
-          >
-            {t("button.append")}
-          </StyledButton>
-        ) : null}
-        {hasPermission(EntityType.MENU, PermissionAction.UPDATE) ? (
-          <StyledButton
-            startIcon={<DriveFileRenameOutlineIcon sx={{ opacity: "60%" }} />}
-            onClick={(event) => {
-              onUpdate(menu);
-              event.stopPropagation();
-            }}
-            sx={{
-              "& .MuiButton-startIcon": {
-                marginRight: 0,
-              },
-            }}
-          />
-        ) : null}
-        {hasPermission(EntityType.MENU, PermissionAction.DELETE) ? (
-          <StyledButton
-            onClick={(event) => {
-              onDelete(menu);
-              event.stopPropagation();
-            }}
-            startIcon={<DeleteOutlineIcon color="error" />}
-            sx={{
-              "& .MuiButton-startIcon": {
-                marginRight: 0,
-              },
-            }}
-          />
-        ) : null}
+        {menu.type === "nested" && (
+          <>
+            <StyledButton
+              startIcon={<PlaylistAddRoundedIcon sx={{ opacity: 0.6 }} />}
+              onClick={(event) => {
+                onAppend(menu.id);
+                event.stopPropagation();
+              }}
+            >
+              {t("button.append")}
+            </StyledButton>
+            <StyledButton
+              startIcon={<DriveFileRenameOutlineIcon sx={{ opacity: "60%" }} />}
+              onClick={(event) => {
+                onUpdate(menu);
+                event.stopPropagation();
+              }}
+              sx={{
+                "& .MuiButton-startIcon": {
+                  marginRight: 0,
+                },
+              }}
+            />
+            <StyledButton
+              onClick={(event) => {
+                onDelete(menu);
+                event.stopPropagation();
+              }}
+              startIcon={<DeleteOutlineIcon color="error" />}
+              sx={{
+                "& .MuiButton-startIcon": {
+                  marginRight: 0,
+                },
+              }}
+            />
+          </>
+        )}
       </ButtonGroup>
     </Box>
   );

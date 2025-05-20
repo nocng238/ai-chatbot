@@ -25,7 +25,6 @@ import { useDelete } from "@/hooks/crud/useDelete";
 import { useFind } from "@/hooks/crud/useFind";
 import { useUpdate } from "@/hooks/crud/useUpdate";
 import { useDialogs } from "@/hooks/useDialogs";
-import { useHasPermission } from "@/hooks/useHasPermission";
 import { useSearch } from "@/hooks/useSearch";
 import { useToast } from "@/hooks/useToast";
 import { useTranslate } from "@/hooks/useTranslate";
@@ -42,7 +41,6 @@ export const Languages = () => {
   const { toast } = useToast();
   const dialogs = useDialogs();
   const queryClient = useQueryClient();
-  const hasPermission = useHasPermission();
   const { onSearch, searchPayload } = useSearch<ILanguage>({
     $or: ["title", "code"],
   });
@@ -148,10 +146,7 @@ export const Languages = () => {
           checked={params.value}
           color="primary"
           inputProps={{ "aria-label": "primary checkbox" }}
-          disabled={
-            params.value ||
-            !hasPermission(EntityType.LANGUAGE, PermissionAction.UPDATE)
-          }
+          disabled={params.value}
           onChange={() => {
             toggleDefault(params.row);
           }}
@@ -197,18 +192,16 @@ export const Languages = () => {
           <Grid item>
             <FilterTextfield onChange={onSearch} />
           </Grid>
-          {hasPermission(EntityType.LANGUAGE, PermissionAction.CREATE) ? (
-            <Grid item>
-              <Button
-                startIcon={<AddIcon />}
-                variant="contained"
-                sx={{ float: "right" }}
-                onClick={() => dialogs.open(LanguageFormDialog, null)}
-              >
-                {t("button.add")}
-              </Button>
-            </Grid>
-          ) : null}
+          <Grid item>
+            <Button
+              startIcon={<AddIcon />}
+              variant="contained"
+              sx={{ float: "right" }}
+              onClick={() => dialogs.open(LanguageFormDialog, null)}
+            >
+              {t("button.add")}
+            </Button>
+          </Grid>
         </Grid>
       </PageHeader>
       <Grid item xs={12}>

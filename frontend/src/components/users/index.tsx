@@ -25,7 +25,6 @@ import { useUpdate } from "@/hooks/crud/useUpdate";
 import { useAuth } from "@/hooks/useAuth";
 import { useConfig } from "@/hooks/useConfig";
 import { useDialogs } from "@/hooks/useDialogs";
-import { useHasPermission } from "@/hooks/useHasPermission";
 import { useSearch } from "@/hooks/useSearch";
 import { useToast } from "@/hooks/useToast";
 import { useTranslate } from "@/hooks/useTranslate";
@@ -52,7 +51,6 @@ export const Users = () => {
       toast.success(t("message.success_save"));
     },
   });
-  const hasPermission = useHasPermission();
   const { onSearch, searchPayload } = useSearch<IUser>({
     $or: ["first_name", "last_name", "email"],
   });
@@ -144,11 +142,7 @@ export const Users = () => {
           checked={params.value}
           color="primary"
           inputProps={{ "aria-label": "primary checkbox" }}
-          disabled={
-            params.row.id === user?.id ||
-            ssoEnabled ||
-            !hasPermission(EntityType.USER, PermissionAction.UPDATE)
-          }
+          disabled={params.row.id === user?.id || ssoEnabled}
           onChange={() =>
             updateUser({
               id: params.row.id,
@@ -199,8 +193,7 @@ export const Users = () => {
           <Grid item>
             <FilterTextfield onChange={onSearch} />
           </Grid>
-          {!ssoEnabled &&
-          hasPermission(EntityType.USER, PermissionAction.CREATE) ? (
+          {!ssoEnabled ? (
             <Grid item>
               <Button
                 startIcon={<PersonAddAlt1Icon />}

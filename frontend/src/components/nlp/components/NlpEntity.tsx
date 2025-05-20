@@ -27,7 +27,6 @@ import { useDeleteMany } from "@/hooks/crud/useDeleteMany";
 import { useFind } from "@/hooks/crud/useFind";
 import { useApiClient } from "@/hooks/useApiClient";
 import { useDialogs } from "@/hooks/useDialogs";
-import { useHasPermission } from "@/hooks/useHasPermission";
 import { useSearch } from "@/hooks/useSearch";
 import { useToast } from "@/hooks/useToast";
 import { useTranslate } from "@/hooks/useTranslate";
@@ -44,7 +43,6 @@ const NlpEntity = () => {
   const dialogs = useDialogs();
   const router = useRouter();
   const queryClient = useQueryClient();
-  const hasPermission = useHasPermission();
   const { mutate: deleteNlpEntity } = useDelete(EntityType.NLP_ENTITY, {
     onError: () => {
       toast.error(t("message.internal_server_error"));
@@ -215,18 +213,16 @@ const NlpEntity = () => {
           <FilterTextfield onChange={onSearch} />
         </Grid>
 
-        {hasPermission(EntityType.NLP_ENTITY, PermissionAction.CREATE) ? (
-          <Grid item>
-            <Button
-              startIcon={<AddIcon />}
-              variant="contained"
-              sx={{ float: "right" }}
-              onClick={() => dialogs.open(NlpEntityFormDialog, null)}
-            >
-              {t("button.add")}
-            </Button>
-          </Grid>
-        ) : null}
+        <Grid item>
+          <Button
+            startIcon={<AddIcon />}
+            variant="contained"
+            sx={{ float: "right" }}
+            onClick={() => dialogs.open(NlpEntityFormDialog, null)}
+          >
+            {t("button.add")}
+          </Button>
+        </Grid>
         <Grid item>
           <Button
             startIcon={<DeleteIcon />}

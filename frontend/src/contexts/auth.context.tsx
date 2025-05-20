@@ -63,6 +63,7 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
   const logout = async () => {
     updateLanguage(publicRuntimeConfig.lang.default);
     logoutSession();
+    localStorage.removeItem("token");
   };
   const authRedirection = async (isAuthenticated: boolean) => {
     if (isAuthenticated) {

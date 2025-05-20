@@ -25,7 +25,7 @@ import {
   GridValidRowModel,
 } from "@mui/x-data-grid";
 
-import { useHasPermission } from "@/hooks/useHasPermission";
+// import { useHasPermission } from "@/hooks/useHasPermission";
 import { useTranslate } from "@/hooks/useTranslate";
 import { TTranslationKeys } from "@/i18n/i18n.types";
 import { theme } from "@/layout/themes/theme";
@@ -191,13 +191,10 @@ export const useActionColumns = <T extends GridValidRowModel>(
   actions: ActionColumn<T>[],
   headerName: string,
 ) => {
-  const hasPermission = useHasPermission();
+  // const hasPermission = useHasPermission();
 
   return getActionsColumn(
-    actions.filter(
-      ({ requires }) =>
-        !requires || requires.every((action) => hasPermission(type, action)),
-    ),
+    actions.filter(({ requires }) => !requires),
     headerName,
   );
 };

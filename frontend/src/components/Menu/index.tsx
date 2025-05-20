@@ -16,11 +16,9 @@ import { NoDataOverlay } from "@/app-components/tables/NoDataOverlay";
 import { useDelete } from "@/hooks/crud/useDelete";
 import { useFind } from "@/hooks/crud/useFind";
 import { useDialogs } from "@/hooks/useDialogs";
-import { useHasPermission } from "@/hooks/useHasPermission";
 import { useTranslate } from "@/hooks/useTranslate";
 import { PageHeader } from "@/layout/content/PageHeader";
 import { EntityType } from "@/services/types";
-import { PermissionAction } from "@/types/permission.types";
 
 import MenuAccordion from "./MenuAccordion";
 import { MenuFormDialog } from "./MenuFormDialog";
@@ -28,7 +26,6 @@ import { MenuFormDialog } from "./MenuFormDialog";
 export const Menu = () => {
   const { t } = useTranslate();
   const dialogs = useDialogs();
-  const hasPermission = useHasPermission();
   const { data: menus, refetch } = useFind(
     { entity: EntityType.MENUTREE },
     {
@@ -56,16 +53,14 @@ export const Menu = () => {
           width="max-content"
         >
           <Grid item>
-            {hasPermission(EntityType.MENU, PermissionAction.CREATE) ? (
-              <Button
-                variant="contained"
-                onClick={() => dialogs.open(MenuFormDialog, null)}
-                disabled={menus?.length === 10}
-                startIcon={<AddIcon />}
-              >
-                {t("button.add")}
-              </Button>
-            ) : null}
+            <Button
+              variant="contained"
+              onClick={() => dialogs.open(MenuFormDialog, null)}
+              disabled={menus?.length === 10}
+              startIcon={<AddIcon />}
+            >
+              {t("button.add")}
+            </Button>
           </Grid>
         </Grid>
       </PageHeader>

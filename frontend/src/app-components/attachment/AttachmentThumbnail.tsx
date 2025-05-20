@@ -25,12 +25,12 @@ import { useDelete } from "@/hooks/crud/useDelete";
 import { useGet } from "@/hooks/crud/useGet";
 import { useDialogs } from "@/hooks/useDialogs";
 import useFormattedFileSize from "@/hooks/useFormattedFileSize";
-import { useHasPermission } from "@/hooks/useHasPermission";
+// import { useHasPermission } from "@/hooks/useHasPermission";
 import { useToast } from "@/hooks/useToast";
 import { useTranslate } from "@/hooks/useTranslate";
 import { EntityType } from "@/services/types";
 import { IAttachment } from "@/types/attachment.types";
-import { PermissionAction } from "@/types/permission.types";
+// import { PermissionAction } from "@/types/permission.types";
 
 import { ConfirmDialogBody } from "../dialogs";
 
@@ -79,7 +79,7 @@ const AttachmentThumbnail: FC<AttachmentThumbnailProps> = ({
   onChange,
 }) => {
   const formatSize = useFormattedFileSize();
-  const hasPermission = useHasPermission();
+  // const hasPermission = useHasPermission();
   const { data: attachment } = useGet(id, {
     entity: EntityType.ATTACHMENT,
   });
@@ -117,9 +117,7 @@ const AttachmentThumbnail: FC<AttachmentThumbnailProps> = ({
             </Typography>
           </CardContent>
 
-          {format === "full" &&
-          hasPermission(EntityType.ATTACHMENT, PermissionAction.DELETE) &&
-          onChange ? (
+          {format === "full" && onChange ? (
             <>
               <CardActions sx={{ justifyContent: "center", flex: "1 1 50%" }}>
                 <Button
